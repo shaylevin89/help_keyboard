@@ -31,7 +31,7 @@ const Keyboard = ({ onKeyPress, onRemove }) => {
   const [keys, setKeys] = useState([]);
 
   useEffect(() => {
-    fetch('/words.txt')
+    fetch('/help_keyboard/words.txt')
       .then(response => response.text())
       .then(text => {
         const words = text.split('\n').map(word => word.trim()).filter(word => word);
