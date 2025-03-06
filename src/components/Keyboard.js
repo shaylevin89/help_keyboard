@@ -36,7 +36,8 @@ const Keyboard = ({ onKeyPress, onRemove }) => {
       .then(text => {
         const words = text.split('\n').map(word => word.trim()).filter(word => word);
         setKeys([...words, "⌫"]);
-      });
+      })
+      .catch(error => console.error('Error fetching words:', error));
   }, []);
 
   return (
