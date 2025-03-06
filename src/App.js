@@ -1,23 +1,27 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import TextDisplay from './components/TextDisplay';
+import Keyboard from './components/Keyboard';
 import './App.css';
 
 function App() {
+  const [text, setText] = useState('');
+
+  const handleKeyPress = (key) => {
+    setText((prevText) => prevText + ' ' + key);
+  };
+
+  const handleRemove = () => {
+    setText((prevText) => {
+      const words = prevText.trim().split(' ');
+      words.pop();
+      return words.join(' ');
+    });
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <TextDisplay text={text} />
+      <Keyboard onKeyPress={handleKeyPress} onRemove={handleRemove} />
     </div>
   );
 }
