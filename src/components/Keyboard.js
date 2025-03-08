@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const colors = [
   "#f0f8ff", // Light Blue
@@ -27,32 +28,55 @@ const colors = [
   "#f0ffe0"  // Light Honeydew
 ];
 
-const Keyboard = ({ onKeyPress, onRemove }) => {
-  const [keys, setKeys] = useState([]);
+const Keyboard = ({ onKeyPress, onRemove, words }) => {
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [coloredKeys, setColoredKeys] = useState(true);
+  const menuRef = useRef();
 
   useEffect(() => {
-    fetch('/help_keyboard/words.txt')
-      .then(response => response.text())
-      .then(text => {
-        const words = text.split('\n').map(word => word.trim()).filter(word => word);
-        setKeys([...words, "⌫"]);
-      })
-      .catch(error => console.error('Error fetching words:', error));
-  }, []);
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuRef]);
+
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
+  const toggleKeyColors = () => {
+    setColoredKeys(!coloredKeys);
+  };
 
   return (
     <div className="keyboard-container">
+      <button className="menu-icon" onClick={toggleMenu}>☰</button>
+      {menuVisible && (
+        <div className="settings-menu" ref={menuRef}>
+          <Link to="/wordlist">רשימת מקשים</Link>
+          <button onClick={toggleKeyColors}>
+            {coloredKeys ? '🔘' : '⚪'} מקשים בצבע
+          </button>
+        </div>
+      )}
       <div className="keyboard">
-        {keys.map((key, index) => (
+        {words.map((key, index) => (
           <button
             key={index}
             onClick={() => key === "⌫" ? onRemove() : onKeyPress(key)}
-            style={{ backgroundColor: colors[index % colors.length] }}
+            style={{ backgroundColor: coloredKeys ? colors[index % colors.length] : 'transparent' }}
             className={key === "⌫" ? "remove-button" : ""}
           >
             {key}
           </button>
         ))}
+        <button onClick={onRemove} className="remove-button">⌫</button>
       </div>
     </div>
   );
