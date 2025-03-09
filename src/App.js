@@ -31,7 +31,7 @@ function App() {
   };
 
   return (
-    <Router>
+    <Router basename="/help_keyboard">
       <div className="App">
         <Routes>
           <Route path="/settings" element={<Settings />} />
